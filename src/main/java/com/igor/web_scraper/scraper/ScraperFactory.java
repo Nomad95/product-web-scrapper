@@ -12,7 +12,7 @@ public class ScraperFactory {
             case CENEO:
                 SiteConnector siteConnector = new SiteConnector(new ConnectionBackoff());
                 return new CeneoProductScraper(
-                        new CeneoProductExtractor(new CeneoSiteTraverser(siteConnector), new CeneoProductMiner()));
+                        new CeneoProductExtractor(new CeneoSiteTraverser(siteConnector), new CeneoProductMiner(siteConnector)));
             default:
                 throw new WebScrapperException(String.format("Could not find scraper for type %s", site));
         }

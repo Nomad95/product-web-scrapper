@@ -38,7 +38,7 @@ class CeneoProductScraperUnitTest extends Specification {
 
     def "scraper should retrieve product list when traversed successfully"() {
         given: "successful connection and extracted fake products"
-        ceneoDataExtractor.extractProductsFromAllPages(URL) >> [new Product()]
+        ceneoDataExtractor.extractProductsFromAllPages(URL) >> [new Product("", "", new byte[0])]
 
         when:
         List<Product> products = ceneoProductScraper.scrapSite(URL)

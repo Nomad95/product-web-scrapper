@@ -23,9 +23,9 @@ class CeneoProductExtractorUnitTest extends Specification {
         ceneoSiteTraverser = Mock()
         ceneoProductMiner = Mock()
         ceneoDataExtractor = new CeneoProductExtractor(ceneoSiteTraverser, ceneoProductMiner)
-        prod1 = new Product()
-        prod2 = new Product()
-        prod3 = new Product()
+        prod1 = new Product("", "", new byte[0])
+        prod2 = new Product("", "", new byte[0])
+        prod3 = new Product("", "", new byte[0])
     }
 
     def "should get products from one page"() {

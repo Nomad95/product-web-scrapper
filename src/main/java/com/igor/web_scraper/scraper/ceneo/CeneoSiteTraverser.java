@@ -29,7 +29,7 @@ public class CeneoSiteTraverser {
         String relativeUrl = html.getElementsByClass("page-arrow arrow-next")
                 .first()
                 .child(0)
-                .attr("href");
+                .attr("href");//TODO: selector
 
         return BASE_URL + relativeUrl;
     }

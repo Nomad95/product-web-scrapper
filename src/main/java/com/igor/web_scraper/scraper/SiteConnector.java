@@ -52,7 +52,7 @@ public class SiteConnector {
     }
 
     private Document handleHttpError(HttpStatusException e) {
-        if (e.getStatusCode() == 404) {//todo: recoverable error?
+        if (e.getStatusCode() == 404) {
             throw new WebScrapperException("Site " + e.getUrl() + " was not found", e);
         } else {
             throw new WebScrapperException("Server responded with HTTP " + e.getStatusCode() + " at url: " + e.getUrl(), e);
@@ -66,6 +66,16 @@ public class SiteConnector {
 
     public Document getDocument(Connection connection) {
         return getDocument(connection, DEFAULT_RETRY_THRESHOLD);
+    }
+
+    public byte[] safeGetContentAsBytes(String url) {
+        try {
+            return Jsoup.connect(url).ignoreContentType(true).execute().bodyAsBytes();
+        } catch (IOException e) {
+            log.warn("Could not get content at {}", url);
+            log.warn("Thrown exception: {}", e);
+            return new byte[0];
+        }
     }
 
 }

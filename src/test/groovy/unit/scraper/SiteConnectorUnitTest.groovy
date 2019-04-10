@@ -82,4 +82,5 @@ class SiteConnectorUnitTest extends Specification {
         def exception = thrown(WebScrapperException)
         exception.message == "Could not connect to host"
     }
+    //todo: malformed url??
 }

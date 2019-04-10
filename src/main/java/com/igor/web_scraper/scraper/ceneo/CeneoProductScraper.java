@@ -16,11 +16,6 @@ public class CeneoProductScraper implements Scraper<Product> {
 
     @Override
     public List<Product> scrapSite(String startUrl) {
-//        Connection connection = siteConnector.getNewConnection(startUrl);
-//        siteConnector.addStandardDisguiseHeaders(connection);
-//        siteConnector.setHost(connection, HOST);
-//        Document html = siteConnector.getDocument(connection);
-
         List<Product> products = ceneoProductExtractor.extractProductsFromAllPages(startUrl);
         if (products.isEmpty()) {
             log.warn("No data were found. Cancelling further processing");
