@@ -12,7 +12,7 @@ public class XmlParser implements Parser {
     private static final String XML_VERSION_TAG = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
 
     @Override
-    public <T> byte[] parse(List<T> entries) {//TODO: definitions
+    public <T> byte[] parse(List<T> entries) {
         XStream xStream = new XStream(new DomDriver());
         xStream.alias("product", Product.class);
 

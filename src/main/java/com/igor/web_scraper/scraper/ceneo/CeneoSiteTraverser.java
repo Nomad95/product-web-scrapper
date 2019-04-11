@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 
+import static com.igor.web_scraper.scraper.ceneo.CeneoDefinitions.NEXT_PAGE_CENEO_BUTTON;
+
 @Slf4j
 @RequiredArgsConstructor
 public class CeneoSiteTraverser {
@@ -25,14 +27,15 @@ public class CeneoSiteTraverser {
     }
 
     public boolean hasNextSite(@NonNull Document html) {
-        return !html.getElementsByClass("page-arrow arrow-next").isEmpty();
+        return !html.getElementsByClass(NEXT_PAGE_CENEO_BUTTON).isEmpty();
     }
 
     public String getNextSiteUrl(@NonNull Document html) {
-        String relativeUrl = html.getElementsByClass("page-arrow arrow-next")
+        String relativeUrl = html.getElementsByClass(NEXT_PAGE_CENEO_BUTTON)
                 .first()
-                .child(0)
-                .attr("href");//TODO: selector
+                .children()
+                .first()
+                .attr("href");
 
         return BASE_URL + relativeUrl;
     }

@@ -8,6 +8,7 @@ import java.util.List;
 
 public class CeneoDefinitions {
 
+    static final String NEXT_PAGE_CENEO_BUTTON = "page-arrow arrow-next";
     private List<ProductDefinition> definitions = new ArrayList<>(2);
 
     public CeneoDefinitions() {
@@ -27,16 +28,16 @@ public class CeneoDefinitions {
                 "data-original",
                 "src",
                 "category-item-box",
-                "category-item-box"
+                "https:"
         ));
     }
 
-    public List<ProductDefinition> getDefinitions() {
+    List<ProductDefinition> getDefinitions() {
         return Collections.unmodifiableList(definitions);
     }
 
     @Value
-    public static class ProductDefinition {
+    static class ProductDefinition {
         String imageSelector;
         String nameSelector;
         String priceSelector;
