@@ -25,6 +25,7 @@ public class ProductExporter {
         //scrap web
         List<Product> products = scraper.scrapSite(arguments.getUrl());
         //get results
+        products.forEach(pr -> System.out.println(pr));
         //get parser
         Parser parser = parserFactory.getParser(arguments.getParserType());
         //parse to file

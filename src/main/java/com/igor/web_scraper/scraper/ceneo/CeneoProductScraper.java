@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+import static com.igor.web_scraper.WebScraper.notifyUser;
+
 @Slf4j
 @RequiredArgsConstructor
 public class CeneoProductScraper implements Scraper<Product> {
@@ -19,6 +21,7 @@ public class CeneoProductScraper implements Scraper<Product> {
         List<Product> products = ceneoProductExtractor.extractProductsFromAllPages(startUrl);
         if (products.isEmpty()) {
             log.warn("No data were found. Cancelling further processing");
+            notifyUser("No data were found");
             throw new WebScrapperException("No data found for this site");
         }
 

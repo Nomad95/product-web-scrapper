@@ -34,6 +34,22 @@ class CeneoProductMinerUnitTest extends Specification {
         products.containsAll([product1, product2, product3])
     }
 
+    def "should return empty byte array when no image was found"() {
+        given: "modified htm with no proper image attributes"
+        Product expectedProduct = new Product("Yamaha Pacifica 112V BL", "999,00", new byte[0])
+        document = Jsoup.parse(IOUtils.toString(getClass().getResourceAsStream("/html/ceneo.html"))
+                .replace("data-original", "abc")
+                .replace("<img src", "<img sc"))
+        siteConnector.safeGetContentAsBytes(_) >> fakeBytes
+
+        when:
+        List<Product> products = ceneoProductMiner.getProductsFromSite(document)
+
+        then:
+        noExceptionThrown()
+        products.contains(expectedProduct)
+    }
+
 //    //image.ceneostatic.pl/data/products/5743342/f-yamaha-pacifica-112v-bl.jpg
 //    Yamaha Pacifica 112V BL
 //    999,00

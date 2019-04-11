@@ -37,6 +37,10 @@ public class SiteConnector {
         connection.header("Host", host);
     }
 
+    public Document getDocument(Connection connection) {
+        return getDocument(connection, DEFAULT_RETRY_THRESHOLD);
+    }
+
     private Document getDocument(Connection connection, int retryThreshold) {
         try {
             return connection.get();
@@ -62,10 +66,6 @@ public class SiteConnector {
     private Document handleTimeoutError(Connection connection, int retryThreshold, SocketTimeoutException e) {
         connectionBackoff.tryRetryConnection(retryThreshold, e);
         return getDocument(connection, retryThreshold - 1);
-    }
-
-    public Document getDocument(Connection connection) {
-        return getDocument(connection, DEFAULT_RETRY_THRESHOLD);
     }
 
     public byte[] safeGetContentAsBytes(String url) {
