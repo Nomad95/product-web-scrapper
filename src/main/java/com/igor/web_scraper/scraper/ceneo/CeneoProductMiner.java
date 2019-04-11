@@ -20,13 +20,15 @@ public class CeneoProductMiner {
 
     private final CeneoDefinitions ceneoDefinitions;
     private final SiteConnector siteConnector;
+    private ProductDefinition currentDefinition;
 
     public List<Product> getProductsFromSite(Document html) {
         log.debug("Extracting products from {}", html.title());
         for (ProductDefinition definition : ceneoDefinitions.getDefinitions()) {
+            currentDefinition = definition;
             List<Product> products = html.getElementsByClass(definition.getContainerElementsClass())
                     .stream()
-                    .map(parseEachElementToProduct(definition))
+                    .map(parseEachElementToProduct())
                     .collect(Collectors.toList());
             if (!products.isEmpty())
                 return products;
@@ -35,23 +37,23 @@ public class CeneoProductMiner {
         return Collections.emptyList();
     }
 
-    private Function<Element, Product> parseEachElementToProduct(ProductDefinition definition) {
+    private Function<Element, Product> parseEachElementToProduct() {
         return element -> {
-            Elements img = element.select(definition.getImageSelector());
-            byte[] image = safeGetProductImage(img, definition);
-            String productName = element.select(definition.getNameSelector()).text();
-            String productPrice = element.select(definition.getPriceSelector()).text();
+            Elements img = element.select(currentDefinition.getImageSelector());
+            byte[] image = safeGetProductImage(img);
+            String productName = element.select(currentDefinition.getNameSelector()).text();
+            String productPrice = element.select(currentDefinition.getPriceSelector()).text();
             return new Product(productName, productPrice, image);
         };
     }
 
-    private byte[] safeGetProductImage(Elements img, ProductDefinition definition) {
+    private byte[] safeGetProductImage(Elements img) {
         String imageUrl = "";
-        if (img.hasAttr(definition.getSubstituteImageAttribute())) {
-            imageUrl = findImageUrl(img, imageUrl, definition.getSubstituteImageAttribute(), definition);
+        if (img.hasAttr(currentDefinition.getSubstituteImageAttribute())) {
+            imageUrl = findImageUrl(img, imageUrl, currentDefinition.getSubstituteImageAttribute());
         }
-        else if (img.hasAttr(definition.getMainImageAttribute())) {
-            imageUrl = findImageUrl(img, imageUrl, definition.getMainImageAttribute(), definition);
+        else if (img.hasAttr(currentDefinition.getMainImageAttribute())) {
+            imageUrl = findImageUrl(img, imageUrl, currentDefinition.getMainImageAttribute());
         }
         else {
             log.debug("Image could not be found");
@@ -60,9 +62,9 @@ public class CeneoProductMiner {
         return siteConnector.safeGetContentAsBytes(imageUrl);
     }
 
-    private String findImageUrl(Elements img, String imageUrl, String substituteImageAttribute, ProductDefinition definition) {
+    private String findImageUrl(Elements img, String imageUrl, String substituteImageAttribute) {
         String absoluteUrl = img.first().absUrl(substituteImageAttribute);
-        imageUrl += absoluteUrl.isEmpty() ? definition.getProtocol() + img.first().attr(substituteImageAttribute) : absoluteUrl;
+        imageUrl += absoluteUrl.isEmpty() ? currentDefinition.getProtocol() + img.first().attr(substituteImageAttribute) : absoluteUrl;
         return imageUrl;
     }
 }
