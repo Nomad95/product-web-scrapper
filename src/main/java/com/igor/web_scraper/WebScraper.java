@@ -4,6 +4,7 @@ import com.igor.web_scraper.cli.ArgumentValidator;
 import com.igor.web_scraper.cli.CommandLineArguments;
 import com.igor.web_scraper.exception.WebScrapperException;
 import com.igor.web_scraper.exporter.ProductExporter;
+import com.igor.web_scraper.output.FileSaver;
 import com.igor.web_scraper.parser.ParserFactory;
 import com.igor.web_scraper.scraper.ScraperFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +36,7 @@ public class WebScraper {
     }
 
     private static ProductExporter getProductExporter() {
-        ScraperFactory scraperFactory = new ScraperFactory();
-        ParserFactory parserFactory = new ParserFactory();
-        return new ProductExporter(scraperFactory, parserFactory);
+        return new ProductExporter(new ScraperFactory(), new ParserFactory(), new FileSaver());
     }
 
     private static void showUserFriendlyErrorMessage(Exception e) {
