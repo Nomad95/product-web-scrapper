@@ -73,7 +73,7 @@ public class SiteConnector {
             return Jsoup.connect(url).ignoreContentType(true).execute().bodyAsBytes();
         } catch (IOException e) {
             log.warn("Could not get content at {}", url);
-            log.warn("Thrown exception: {}", e);
+            log.debug("Thrown exception: {}", e);
             return new byte[0];
         }
     }

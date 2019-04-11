@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+import static com.igor.web_scraper.WebScraper.notifyUser;
+import static java.lang.String.format;
+
 @Slf4j
 @RequiredArgsConstructor
 public class ProductExporter {
@@ -25,11 +28,12 @@ public class ProductExporter {
         //scrap web
         List<Product> products = scraper.scrapSite(arguments.getUrl());
         //get results
-        products.forEach(pr -> System.out.println(pr));
+        //products.forEach(pr -> System.out.println(pr));
         //get parser
         Parser parser = parserFactory.getParser(arguments.getParserType());
         //parse to file
         //save file
+        notifyUser(format("Successfully retrieved %d products", products.size()));
         log.debug("Products exported successfully");
     }
 }

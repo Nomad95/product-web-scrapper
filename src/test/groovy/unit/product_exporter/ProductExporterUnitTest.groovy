@@ -31,6 +31,7 @@ class ProductExporterUnitTest extends Specification {
 
     def "should find scraper"() {
         given:
+        ceneoProductScraper.scrapSite(_) >> []
         cla.site = Site.CENEO
 
         when:
@@ -42,6 +43,7 @@ class ProductExporterUnitTest extends Specification {
 
     def "should find parser"() {
         given:
+        ceneoProductScraper.scrapSite(_) >> []
         scraperFactory.getProductScraper(Site.CENEO) >> ceneoProductScraper
         cla.parserType = ParserType.XML
 

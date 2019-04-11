@@ -17,6 +17,8 @@ public class WebScraper {
     public static void main(String[] args) {
         try {
             CommandLineArguments cla = parseArguments(args);
+            if (cla.isHelpRequested() || cla.isVersionInfoRequested())
+                return;
             getProductExporter().export(cla);
         } catch (CommandLine.PicocliException | WebScrapperException e) {
             log.warn("Exception was thrown: {}", e);
