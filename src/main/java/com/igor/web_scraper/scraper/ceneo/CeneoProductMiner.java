@@ -3,6 +3,7 @@ package com.igor.web_scraper.scraper.ceneo;
 import com.igor.web_scraper.scraper.Product;
 import com.igor.web_scraper.scraper.SiteConnector;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @RequiredArgsConstructor
 public class CeneoProductMiner {
 
@@ -24,6 +25,7 @@ public class CeneoProductMiner {
     private final SiteConnector siteConnector;
 
     public List<Product> getProductsFromSite(Document html) {
+        log.debug("Extracting products from {}", html.title());
         return html.getElementsByClass("category-item-box")
                 .stream()
                 .map(parseEachElementToProduct())
@@ -46,8 +48,10 @@ public class CeneoProductMiner {
             imageUrl += img.first().absUrl(SUBSTITUTE_IMAGE_ATTRIBUTE);
         else if (img.hasAttr(MAIN_IMAGE_ATTRIBUTE))
             imageUrl += img.first().absUrl(MAIN_IMAGE_ATTRIBUTE);
-        else
+        else {
+            log.debug("Image could not be found");
             return new byte[0];
+        }
         return siteConnector.safeGetContentAsBytes(imageUrl);
     }
 }

@@ -42,6 +42,7 @@ public class SiteConnector {
     }
 
     private Document getDocument(Connection connection, int retryThreshold) {
+        log.debug("Trying to access document...");
         try {
             return connection.get();
         } catch (HttpStatusException e) {
@@ -69,6 +70,7 @@ public class SiteConnector {
     }
 
     public byte[] safeGetContentAsBytes(String url) {
+        log.debug("Accessing resource at {}", url);
         try {
             return Jsoup.connect(url).ignoreContentType(true).execute().bodyAsBytes();
         } catch (IOException e) {

@@ -18,13 +18,15 @@ public class CeneoProductScraper implements Scraper<Product> {
 
     @Override
     public List<Product> scrapSite(String startUrl) {
+        log.debug("Started extracting products from Ceneo");
         List<Product> products = ceneoProductExtractor.extractProductsFromAllPages(startUrl);
         if (products.isEmpty()) {
-            log.warn("No data were found. Cancelling further processing");
+            log.info("No data were found. Cancelling further processing");
             notifyUser("No data were found");
             throw new WebScrapperException("No data found for this site");
         }
 
+        log.debug("Products from Ceneo were extracted");
         return products;
     }
 }

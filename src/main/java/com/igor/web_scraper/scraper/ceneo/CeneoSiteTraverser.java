@@ -3,9 +3,11 @@ package com.igor.web_scraper.scraper.ceneo;
 import com.igor.web_scraper.scraper.SiteConnector;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 
+@Slf4j
 @RequiredArgsConstructor
 public class CeneoSiteTraverser {
 
@@ -15,6 +17,7 @@ public class CeneoSiteTraverser {
     private final SiteConnector siteConnector;
 
     public Document getDocument(@NonNull String url) {
+        log.debug("Creating request to {}", url);
         Connection connection = siteConnector.getNewConnection(url);
         siteConnector.setHost(connection, HOST);
         siteConnector.addStandardDisguiseHeaders(connection);
