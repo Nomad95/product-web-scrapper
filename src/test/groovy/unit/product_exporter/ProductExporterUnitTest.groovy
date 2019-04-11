@@ -5,6 +5,7 @@ import com.igor.web_scraper.cli.CommandLineArguments
 import com.igor.web_scraper.exception.WebScrapperException
 import com.igor.web_scraper.exporter.ProductExporter
 import com.igor.web_scraper.output.FileSaver
+import com.igor.web_scraper.output.PathCreator
 import com.igor.web_scraper.parser.ParserFactory
 import com.igor.web_scraper.parser.ParserType
 import com.igor.web_scraper.parser.xml.XmlParser
@@ -16,13 +17,14 @@ import spock.lang.Specification
 
 class ProductExporterUnitTest extends Specification {
 
+    CeneoProductScraper ceneoProductScraper
+    ProductExporter productExporter
     ScraperFactory scraperFactory
     ParserFactory parserFactory
-    ProductExporter productExporter
-    CeneoProductScraper ceneoProductScraper
+    CommandLineArguments cla
+    PathCreator pathCreator
     FileSaver fileSaver
     XmlParser xmlParser
-    CommandLineArguments cla
 
     def exampleBytes = new byte[0]
     def exampleDirectory = new File("/path")
@@ -32,18 +34,21 @@ class ProductExporterUnitTest extends Specification {
         scraperFactory = Mock()
         parserFactory = Mock()
         ceneoProductScraper = Mock()
+        pathCreator = Mock()
         fileSaver = Mock()
         xmlParser = Mock()
-        productExporter = new ProductExporter(scraperFactory, parserFactory, fileSaver)
+        productExporter = new ProductExporter(scraperFactory, parserFactory, fileSaver, pathCreator)
         cla = new CommandLineArguments(new ArgumentValidator())
+
+        pathCreator.createTargetFilePath(_) >> "."
+        scraperFactory.getProductScraper(Site.CENEO) >> ceneoProductScraper
+        parserFactory.getParser(ParserType.XML) >> xmlParser
+        xmlParser.parse([exampleProduct]) >> exampleBytes
     }
 
     def "should find scraper"() {
         given:
         ceneoProductScraper.scrapSite(_) >> []
-        xmlParser.parse([exampleProduct]) >> exampleBytes
-        parserFactory.getParser(ParserType.XML) >> xmlParser
-        xmlParser.parse([exampleProduct]) >> exampleBytes
         cla.site = Site.CENEO
 
         when:
@@ -55,10 +60,6 @@ class ProductExporterUnitTest extends Specification {
 
     def "should scrap site"() {
         given:
-        Product exampleProduct = exampleProduct
-        scraperFactory.getProductScraper(Site.CENEO) >> ceneoProductScraper
-        parserFactory.getParser(ParserType.XML) >> xmlParser
-        xmlParser.parse([exampleProduct]) >> exampleBytes
         cla.outputDirectory = exampleDirectory
 
         when:
@@ -72,7 +73,6 @@ class ProductExporterUnitTest extends Specification {
     def "should find parser"() {
         given:
         ceneoProductScraper.scrapSite(_) >> []
-        scraperFactory.getProductScraper(Site.CENEO) >> ceneoProductScraper
         cla.parserType = ParserType.XML
 
         when:
@@ -84,10 +84,7 @@ class ProductExporterUnitTest extends Specification {
 
     def "should parse products when found"() {
         given:
-        Product exampleProduct = exampleProduct
         ceneoProductScraper.scrapSite(_) >> [exampleProduct]
-        scraperFactory.getProductScraper(Site.CENEO) >> ceneoProductScraper
-        parserFactory.getParser(ParserType.XML) >> xmlParser
         cla.outputDirectory = exampleDirectory
 
         when:
@@ -99,28 +96,20 @@ class ProductExporterUnitTest extends Specification {
 
     def "should save output file when successfully obtained the products"() {
         given:
-        Product exampleProduct = exampleProduct
         ceneoProductScraper.scrapSite(_) >> [exampleProduct]
-        xmlParser.parse([exampleProduct]) >> exampleBytes
-        scraperFactory.getProductScraper(Site.CENEO) >> ceneoProductScraper
-        parserFactory.getParser(ParserType.XML) >> xmlParser
         cla.outputDirectory = exampleDirectory
 
         when:
         productExporter.export(cla)
 
         then:
-        1 * fileSaver.saveToFile(exampleBytes, cla.outputDirectory, ParserType.XML.getExtension())
+        1 * fileSaver.saveToFile(exampleBytes, _ as File)
     }
 
     def "should throw WebScraperException when file could not be saved"() {
         given:
-        Product exampleProduct = exampleProduct
         ceneoProductScraper.scrapSite(_) >> [exampleProduct]
-        xmlParser.parse([exampleProduct]) >> exampleBytes
-        scraperFactory.getProductScraper(Site.CENEO) >> ceneoProductScraper
-        parserFactory.getParser(ParserType.XML) >> xmlParser
-        fileSaver.saveToFile(_, _, _) >> { throw new IOException("error!") }
+        fileSaver.saveToFile(_ as byte[], _ as File) >> { throw new IOException("error!") }
         cla.outputDirectory = exampleDirectory
 
         when:

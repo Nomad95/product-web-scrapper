@@ -3,6 +3,7 @@ package com.igor.web_scraper.exporter;
 import com.igor.web_scraper.cli.CommandLineArguments;
 import com.igor.web_scraper.exception.WebScrapperException;
 import com.igor.web_scraper.output.FileSaver;
+import com.igor.web_scraper.output.PathCreator;
 import com.igor.web_scraper.parser.Parser;
 import com.igor.web_scraper.parser.ParserFactory;
 import com.igor.web_scraper.scraper.Product;
@@ -11,6 +12,7 @@ import com.igor.web_scraper.scraper.ScraperFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class ProductExporter {
     private final ScraperFactory scraperFactory;
     private final ParserFactory parserFactory;
     private final FileSaver fileSaver;
+    private final PathCreator pathCreator;
 
     public void export(CommandLineArguments arguments) {
         log.debug("Started exporting products");
@@ -40,7 +43,8 @@ public class ProductExporter {
 
     private void trySaveFile(CommandLineArguments arguments, byte[] output) {
         try {
-            fileSaver.saveToFile(output, arguments.getOutputDirectory(), arguments.getParserType().getExtension());
+            String resultFilePath = pathCreator.createTargetFilePath(arguments);
+            fileSaver.saveToFile(output, new File(resultFilePath));
         } catch (IOException e) {
             log.error("Could not save file to filesystem!");
             throw new WebScrapperException(String.format("Could not save file: %s", e.getMessage()), e);
