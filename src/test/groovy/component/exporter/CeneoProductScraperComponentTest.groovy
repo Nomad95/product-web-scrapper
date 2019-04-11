@@ -2,10 +2,7 @@ package component.exporter
 
 import com.igor.web_scraper.scraper.Product
 import com.igor.web_scraper.scraper.SiteConnector
-import com.igor.web_scraper.scraper.ceneo.CeneoProductExtractor
-import com.igor.web_scraper.scraper.ceneo.CeneoProductMiner
-import com.igor.web_scraper.scraper.ceneo.CeneoProductScraper
-import com.igor.web_scraper.scraper.ceneo.CeneoSiteTraverser
+import com.igor.web_scraper.scraper.ceneo.*
 import org.apache.commons.io.IOUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -25,7 +22,7 @@ class CeneoProductScraperComponentTest extends Specification {
         ceneoProductScraper =  new CeneoProductScraper(
                 new CeneoProductExtractor(
                         new CeneoSiteTraverser(siteConnector),
-                        new CeneoProductMiner(siteConnector)))
+                        new CeneoProductMiner(new CeneoDefinitions(), siteConnector)))
 
     }
     //nie udalo sie za 2 razem

@@ -13,6 +13,7 @@ public class PathCreator {
 
     public String createTargetFilePath(CommandLineArguments arguments) {
         return arguments.getOutputDirectory().getPath()
+                .concat("/")
                 .concat(ZonedDateTime.now(ZoneId.of("Europe/Warsaw"))
                         .toLocalDateTime()
                         .format(ofPattern(FOLDER_DATE_FORMATTER)))
